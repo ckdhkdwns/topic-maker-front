@@ -5,17 +5,23 @@ import { data } from "components/data";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  border: 2px solid green; // debug only
+  width: fit-content;
+`;
 
-export default function Test() {
+type ForceGraph = {
+  startWord : string;
+}
+export default function ForceGraph({ startWord }:ForceGraph) {
   const location = useLocation();
-  const startWord = { ...location.state };
 
   const [mindmapData, setMindmapData] = useState({
     nodes: [
       {
         id: "0",
-        name: startWord.word,
+        color: 'black',
+        name: startWord,
         val: 20,
       },
       // {
@@ -33,6 +39,7 @@ export default function Test() {
     <Wrapper>
       <ForceGraph2D
       // backgroundColor="black"
+      width={500}
         graphData={mindmapData}
         nodeAutoColorBy="group"
         nodeCanvasObject={(node: any, ctx, globalScale) => {

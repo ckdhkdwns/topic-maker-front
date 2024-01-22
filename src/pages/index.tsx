@@ -1,11 +1,15 @@
 import React from "react";
 import styled from "styled-components";
 
-const Wrapper = styled.div`
+const Wrapper = styled.section`
   background: #003788;
   height: 100vh;
   display: flex;
   position: relative;
+ 
+  scroll-snap-align: start;
+  height: 100vh;
+
 `;
 
 const Titles = styled.div`
