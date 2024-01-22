@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+// eslint-disable-next-line
+import React, { useEffect, useState } from "react"; 
 
 import ForceGraph2D from "react-force-graph-2d";
-import { data } from "components/data";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 
@@ -10,12 +10,15 @@ const Wrapper = styled.div`
   width: fit-content;
 `;
 
-type ForceGraph = {
+type ForceGraphProps = {
   startWord : string;
 }
-export default function ForceGraph({ startWord }:ForceGraph) {
+
+export default function ForceGraph({ startWord }:ForceGraphProps) {
+  // eslint-disable-next-line
   const location = useLocation();
 
+  // eslint-disable-next-line
   const [mindmapData, setMindmapData] = useState({
     nodes: [
       {
