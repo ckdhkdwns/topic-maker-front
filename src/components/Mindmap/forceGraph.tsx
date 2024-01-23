@@ -1,7 +1,9 @@
 // eslint-disable-next-line
-import React, { useEffect, useState } from "react"; 
+import { data } from "components/data";
+import React, { useEffect, useState } from "react";
 
 import ForceGraph2D from "react-force-graph-2d";
+
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 
@@ -11,43 +13,27 @@ const Wrapper = styled.div`
 `;
 
 type ForceGraphProps = {
-  startWord : string;
-}
+  mindmapData: any;
+  handleNodeClick: Function;
+};
 
-export default function ForceGraph({ startWord }:ForceGraphProps) {
+export default function ForceGraph({ mindmapData, handleNodeClick }: ForceGraphProps) {
   // eslint-disable-next-line
-  const location = useLocation();
+  // const location = useLocation();
 
   // eslint-disable-next-line
-  const [mindmapData, setMindmapData] = useState({
-    nodes: [
-      {
-        id: "0",
-        color: 'black',
-        name: startWord,
-        val: 20,
-      },
-      // {
-      //   id: "1",
-      //   isClusterNode: true,
-      //   name: "Transport",
-      //   val: 5,
-      // },
-    ],
-
-    links: [],
-  });
 
   return (
     <Wrapper>
       <ForceGraph2D
-      // backgroundColor="black"
-      width={500}
+        // backgroundColor="black"
+        // enableNodeDrag={false}
+        width={700}
         graphData={mindmapData}
-        nodeAutoColorBy="group"
+        onNodeClick={(node) => handleNodeClick(node)}
         nodeCanvasObject={(node: any, ctx, globalScale) => {
-          const label = node.name;
-          const fontSize = 42 / globalScale;
+          const label = node.id;
+          const fontSize = 20 / globalScale;
           ctx.font = `${fontSize}px Sans-Serif`;
           const textWidth = ctx.measureText(label).width;
           const bckgDimensions = [textWidth, fontSize].map(
@@ -60,7 +46,7 @@ export default function ForceGraph({ startWord }:ForceGraphProps) {
             bckgDimensions[0],
             bckgDimensions[1]
           );
-          
+
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillStyle = node.color;
@@ -71,7 +57,7 @@ export default function ForceGraph({ startWord }:ForceGraphProps) {
         nodePointerAreaPaint={(node, color, ctx) => {
           ctx.fillStyle = color;
           const bckgDimensions = node.__bckgDimensions;
-          bckgDimensions && ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, bckgDimensions[0], bckgDimensions[1]);
+          bckgDimensions && node.x && node.y && ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, bckgDimensions[0], bckgDimensions[1]);
         }}
       />
     </Wrapper>

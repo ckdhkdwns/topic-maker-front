@@ -2,10 +2,8 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import styled from "styled-components";
-import Index from "./pages";
-import StartWord from "pages/startWords";
 import Mindmap from "pages/mindmap";
-
+import Start from "pages/start/_start";
 
 
 const Wrapper = styled.div`
@@ -22,8 +20,7 @@ function App() {
     <Wrapper>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} ></Route>
-          <Route path="/start-word" element={<StartWord />} ></Route>
+          <Route path="/" element={<Start />} ></Route>
           <Route path="/mindmap" element={<Mindmap />} ></Route>
           {/* <Route path="/test" element={<Test />} ></Route> */}
         </Routes>

@@ -2,6 +2,7 @@ import StartWordBtn from 'components/startWordBtn';
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { SectionsContainer, Section } from "react-fullpage";
 
 const Wrapper = styled.section`
     display: flex;
@@ -89,6 +90,7 @@ export default function StartWord() {
         }});
     }
   return (
+    <Section>
     <Wrapper>
         <Header>
             <TitleWrapper>
@@ -105,5 +107,6 @@ export default function StartWord() {
             })}
         </Words>
     </Wrapper>
+    </Section>
   )
 }
