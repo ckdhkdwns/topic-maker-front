@@ -28,8 +28,12 @@
 }
 html { 
   font-size: 62.5%;
-  
-  
+
+  width: 100vw;
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
 body {
   margin: 0;

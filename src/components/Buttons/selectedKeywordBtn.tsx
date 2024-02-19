@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
+
 const Wrapper = styled.button`
   all: unset;
   font-size: 22px;
@@ -13,10 +14,11 @@ const Wrapper = styled.button`
   padding: 0 20px;
 `;
 
-type RelatedWordBtnProps = {
+
+type SelectedKeywordBtnProps = {
   word: string;
-  onBtnClick: Function;
 };
-export default function RelatedWordBtn({ word, onBtnClick }: RelatedWordBtnProps) {
-  return <Wrapper onClick={() => onBtnClick(word)}>{word}</Wrapper>;
+
+export default function SelectedKeywordBtn({ word }: SelectedKeywordBtnProps) {
+  return <Wrapper>{word}</Wrapper>;
 }

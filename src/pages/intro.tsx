@@ -1,18 +1,16 @@
 import React from "react";
 import styled from "styled-components";
-import { SectionsContainer, Section } from "react-fullpage";
-
+import { motion } from "framer-motion";
 const Wrapper = styled.div`
-  background: #003788;
-  height: 100vh;
+
   display: flex;
   position: relative;
-
-  scroll-snap-align: start;
   height: 100vh;
+  width: 60vw;
+  background: #fafafa;
 `;
 
-const Titles = styled.div`
+const Titles = styled(motion.div)`
   display: flex;
   flex-direction: column;
   gap: 25px;
@@ -20,11 +18,11 @@ const Titles = styled.div`
 `;
 const Title = styled.div`
   font-size: 7vh;
-  color: #ffffff;
+  color: #003788;
   font-weight: bold;
 `;
 
-const Footer = styled.div`
+const Footer = styled(motion.div)`
   position: absolute;
   font-size: 25px;
   right: 45px;
@@ -47,15 +45,21 @@ const footer_sentence =
 
 export default function Intro() {
   return (
-    <Section>
-      <Wrapper>
-        <Titles>
-          {title_sentences.map((sentence, idx) => {
-            return <Title key={idx}>{sentence}</Title>;
-          })}
-        </Titles>
-        <Footer>{footer_sentence}</Footer>
-      </Wrapper>
-    </Section>
+    <Wrapper>
+      <Titles
+        initial={{ opacity: 0 }}
+        animate={{ x: 20, opacity: 1 }}
+        transition={{ ease: "easeOut", duration: 1.0 }}
+      >
+        {title_sentences.map((sentence, idx) => {
+          return <Title key={idx}>{sentence}</Title>;
+        })}
+      </Titles>
+      <Footer
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ ease: "easeOut", duration: 1.0, delay: 1.0 }}
+      >{footer_sentence}</Footer>
+    </Wrapper>
   );
 }
