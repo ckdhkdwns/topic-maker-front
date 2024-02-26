@@ -9,10 +9,29 @@ import ReposPreview from "components/Mindmap/WordInformations/repos";
 const Wrapper = styled(motion.div)`
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100vh;
+  overflow: auto;
+  scrollbar-gutter: stable;
 `;
 
 const Header = styled.div`
+  display: flex;
+  flex-direction: column;
+  transition: 0.1s all;
+
+  border-radius: 10px;
+
+  /* margin-right: 0; */
+  margin-bottom: 20px;
+`;
+
+const Divider = styled.div`
+  background-color: #dfdfdf;
+  height: 1px;
+  width: 95%;
+  margin: 0 auto;
+`;
+const Head = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 30px 10px 20px;
@@ -34,6 +53,7 @@ const DoneButton = styled.button`
   padding: 0 20px;
   color: #ffffff;
 `;
+
 const MainWord = styled.div`
   font-size: 34px;
   font-weight: 600;
@@ -45,22 +65,8 @@ const Informations = styled.div`
   flex-direction: column;
   gap: 30px;
   height: fit-content;
-  padding: 0 40px 30px;
-  margin-right: 5px;
-  overflow: overlay;
 
-  &::-webkit-scrollbar {
-    width: 25px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-clip: padding-box;
-    background: #cfcfcf;
-    border: 8px solid #fafafa;
-    border-radius: 15px;
-  }
-  &::-webkit-scrollbar-track {
-    margin: 4px 0;
-  }
+  margin: 10px;
 `;
 type MakePhaseProps = {
   handleRelatedBtnClick: Function;
@@ -68,12 +74,14 @@ type MakePhaseProps = {
 
   handleMindmapEnd: Function;
   wordInformations: any;
+  reloadWords: Function;
 };
 export default function MakePhase({
   handleRelatedBtnClick,
   mainWord,
   handleMindmapEnd,
   wordInformations,
+  reloadWords
 }: MakePhaseProps) {
   return (
     <Wrapper
@@ -88,18 +96,25 @@ export default function MakePhase({
       transition={{ duration: 0.5 }}
     >
       <Header>
-        <MainWord>{mainWord}</MainWord>
-        <DoneButton onClick={() => handleMindmapEnd()}>다음</DoneButton>
-      </Header>
-      <Informations>
+        <Head>
+          <MainWord>{mainWord}</MainWord>
+          <DoneButton onClick={() => handleMindmapEnd()}>다음</DoneButton>
+        </Head>
         <RelatedWords
           handleRelatedBtnClick={handleRelatedBtnClick}
           relatedWords={wordInformations.words}
           handleMindmapEnd={handleMindmapEnd}
+          reloadWords={reloadWords}
         />
+      </Header>
+
+      <Informations>
+        <Divider />
         <DatasetsPreview datasets={wordInformations.datasets} />
+        {wordInformations.datasets.length > 0 && <Divider /> }
         <NewsPreview news={wordInformations.news} />
-        <ReposPreview repos = {wordInformations.repos} />
+        {wordInformations.news.length > 0 && <Divider /> }
+        <ReposPreview repos={wordInformations.repos} />
       </Informations>
     </Wrapper>
   );

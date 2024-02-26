@@ -6,6 +6,8 @@ import { AnimatePresence, motion } from "framer-motion";
 const Wrapper = styled(motion.div)`
   display: flex;
   flex-wrap: wrap;
+  background: #ffffff;
+  border-radius: 10px;
 
   gap: 10px;
   flex-direction: column;
@@ -63,7 +65,7 @@ const Footer = styled.div`
   font-size: 14px;
   color: #7f7f7f;
   position: absolute;
-  bottom: 20px;
+  bottom: 30px;
   padding-top: 20px;
   padding-left: 5px;
   width: 90%;

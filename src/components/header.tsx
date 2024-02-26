@@ -5,9 +5,10 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-
   box-sizing: border-box;
-
+  position: absolute;
+  top: 0;
+  z-index: 100;
 `;
 
 const Main = styled.div`

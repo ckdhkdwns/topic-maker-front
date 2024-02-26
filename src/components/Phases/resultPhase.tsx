@@ -1,13 +1,16 @@
 import { motion } from "framer-motion";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
 
 const Wrapper = styled(motion.div)`
-  all: unset;
   display: flex;
   flex-direction: column;
   font-size: 16px;
-  height: 100%;
+  background: #ffffff;
+
+  border-radius: 10px;
+  height: 100vh;
 `;
 
 const Header = styled.div`
@@ -20,15 +23,18 @@ const Header = styled.div`
   font-weight: 600;
 `;
 
-const Topics = styled.div`
+const Body = styled.div`
+  overflow: auto;
+  width: 100%;
+`;
+const Topics = styled(motion.div)`
   display: flex;
   flex-direction: column;
   overflow: auto;
   height: fit-content;
-  gap: 1px;
-  background: #dfdfdf;
-  margin: 0px 30px;
-  margin-right: 10px;
+
+  z-index: 1;
+
   &::-webkit-scrollbar {
     width: 25px;
   }
@@ -45,15 +51,36 @@ const Topics = styled.div`
 `;
 
 const TopicWrapper = styled.div`
-  padding: 30px 20px;
-  
-  /* border: 1px solid #dfdfdf; */
-  background: #fafafa;
+  padding: 30px 40px;
 
+  /* border: 1px solid #dfdfdf; */
+  background: #ffffff;
 
   display: flex;
   flex-direction: column;
   gap: 10px;
+  transition: 0.1s all;
+  position: relative;
+  cursor: pointer;
+  :hover {
+    background: #fafafa;
+  }
+  svg {
+    position: absolute;
+    right: 40px;
+    top: 50px;
+    fill: #afafaf;
+    height: 30px;
+    width: 30px;
+  }
+`;
+const Divider = styled.div`
+  width: 90%;
+  height: 1px;
+  background: #dfdfdf;
+  left: 5%;
+  position: absolute;
+  bottom: 0;
 `;
 
 const Title = styled.div`
@@ -62,15 +89,26 @@ const Title = styled.div`
 `;
 
 const Subtitle = styled.div`
-  color: #7f7f7f;  
-`
+  color: #7f7f7f;
+`;
 
-const Description = styled.div``;
+const DetailBtn = styled.div`
+  position: absolute;
+  right: 10px;
+  top: 20px;
+  svg {
+  }
+`;
+
+const Description = styled.div`
+
+`;
 
 type ResultPhaseProps = {
   resultTopics: any[];
 };
 export default function ResultPhase({ resultTopics }: ResultPhaseProps) {
+  const [isTopicFocused, setIsTopicFocused] = useState([false, false,  false, false]); // index
   useEffect(() => {
     console.log(resultTopics);
   }, []);
@@ -87,16 +125,25 @@ export default function ResultPhase({ resultTopics }: ResultPhaseProps) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Header>주제 생성</Header>
-      <Topics>
-        {resultTopics.map((result) => (
-          <TopicWrapper>
-            <Title>{result.title}</Title>
-            <Subtitle>{result.subtitle}</Subtitle>
-            <Description>{result.description}</Description>
-          </TopicWrapper>
-        ))}
-      </Topics>
+      <Header>추천 주제</Header>
+      <Body>
+        <Topics>
+          {(resultTopics.map((result, idx) => (
+            <TopicWrapper onClick={() => setIsTopicFocused(prev => {
+              const copied = JSON.parse(JSON.stringify(prev))
+              copied[idx] = !copied[idx]
+              return copied;
+            })}>
+              <Title>{result.title}</Title>
+              <Subtitle>{result.subtitle}</Subtitle>
+              {isTopicFocused[idx] ? <IoIosArrowDown style={{top: "45px"}}/> : <IoIosArrowForward />}
+              {isTopicFocused[idx] && <Description>{result.description}</Description>}
+              <Divider />
+            </TopicWrapper>
+          )))}
+        </Topics>
+        
+      </Body>
     </Wrapper>
   );
 }
