@@ -32,9 +32,12 @@ import Electronic from "assets/WordIcons/electronic.svg";
 const Wrapper = styled(motion.div)`
   display: flex;
   flex-direction: column;
+
+  background: #ffffff;
+  border-radius: 10px;
+  height: 100vh;
 `;
 
-const Right = styled.div``;
 const InputWrapper = styled.div`
   display: flex;
   justify-content: space-between;
@@ -66,7 +69,7 @@ const KeywordInput = styled.input`
 
 const Words = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   width: 100%;
   gap: 10px;
 
@@ -214,6 +217,7 @@ export default function StartPhase({
       links: [],
     });
     getWordInformations(word);
+    setProcess(50);
     setPhase(MAKE);
   };
 
@@ -221,7 +225,7 @@ export default function StartPhase({
   useEffect(() => {
     const onEnterPressed = (e: any) => {
       if (e.keyCode != 13) return;
-      e.preventDefault();    
+      e.preventDefault();
       initMake(inputValue);
     };
     document.addEventListener("keydown", onEnterPressed);
@@ -229,10 +233,6 @@ export default function StartPhase({
       document.removeEventListener("keydown", onEnterPressed);
     };
   }, [inputValue]);
-
-  useEffect(() => {
-    setProcess(25);
-  }, []);
 
   return (
     <Wrapper

@@ -1,21 +1,21 @@
 import React from 'react'
 import styled from 'styled-components'
-import Health from 'assets/health.svg';
 
 const Wrapper = styled.button`
     all: unset;
     /* opacity: 40%; */
  font-size: 18px;
  width: 100%;
- height: 50px;
+ height: 52px;
  border-radius: 60px;
  /* background: #f8f8ff; */
- border: 1px solid #d0d0d0;
+ background: #f5f5f5;
+ /* border: 1px solid #dfdfdf; */
  text-align: center;
  line-height: 60px;
  display: flex;
-padding-left: 8px;
-
+  padding-left: 23px;
+  justify-content: space-between;
  box-sizing: border-box;
  align-items: center;
  gap: 10px;
@@ -23,7 +23,7 @@ padding-left: 8px;
  cursor: pointer;
  transition: 0.2s all;
  :hover {
-  background-color: #efefef;
+  background-color: #bacae3;
  }
  
 `
@@ -33,9 +33,17 @@ const ImageWrapper = styled.div`
   width: 45px;
   height: 45px;
   border-radius: 40px;
+  margin-right: 10px;
   
-
-
+    svg {
+      path {
+        stroke: #121212;
+    fill: #121212;
+      }
+    
+    }
+  
+  
 `
 
 const Title = styled.div`
@@ -53,7 +61,7 @@ const Name = styled.div`
 
 const English = styled.div`
   font-size: 12px;
-  color: #afafaf;
+  color: #6f6f6f;
 `
 type StartWordBtnProps = {
     word: any;
@@ -62,14 +70,14 @@ type StartWordBtnProps = {
 export default function StartWordBtn({ word, handleBtnClick }: StartWordBtnProps) {
   return (
     <Wrapper onClick={() => handleBtnClick(word.name)}>
-      <ImageWrapper>
-      <img src={word.source} alt={word.name} style={{width: word.width, height: word.height}} />
-      </ImageWrapper>
+      
       <Title>
         <Name>{word.name}</Name>
         <English>{word.engName}</English>
       </Title>
-        
+      {/* <ImageWrapper>
+        <img src={word.source} alt={word.name} style={{width: word.width, height: word.height}} />
+      </ImageWrapper>   */}
     </Wrapper>
   )
 }

@@ -6,7 +6,11 @@ import Spinner from "assets/vertical.svg";
 const Wrapper = styled(motion.div)`
   display: flex;
   flex-direction: column;
-  height: 90vh;
+
+  margin: 10px;
+  background: #ffffff;
+  border-radius: 10px;
+  height: 100vh;
   justify-content: center;
   align-items: center;
 `;

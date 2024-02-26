@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import styled from "styled-components";
 import { LOADING, MAKE, RESULT, SELECT, START } from "constants/phaseIndex";
@@ -10,8 +10,8 @@ import MakePhase from "components/Phases/makePhase";
 import Loading from "pages/loading";
 import ResultTopics from "components/Phases/resultPhase";
 import axios from "axios";
-import StartKeywordTitle from "components/Left/startKeywordTitle";
 import Intro from "pages/intro";
+import Header from "components/header";
 
 const Wrapper = styled.div`
   display: flex;
@@ -19,11 +19,10 @@ const Wrapper = styled.div`
   overflow-y: hidden;
   width: 100vw;
   height: 100vh;
+  flex-direction: column;
   justify-content: center;
-  background: #dfdfdf;
-
+  position: relative;
   box-sizing: border-box;
-  gap: 1px;
 `;
 
 const Left = styled.div`
@@ -36,10 +35,10 @@ const Left = styled.div`
 
 const Right = styled.div`
   margin: auto 0;
-  background: #ffffff;
+  border-left: 1px solid #dfdfdf;
   position: relative;
   display: flex;
-  background: #fafafa;
+  background: #ffffff;
   flex-direction: column;
   margin: auto 0;
   width: 40%;
@@ -47,48 +46,13 @@ const Right = styled.div`
 
   box-sizing: border-box;
 
-  margin: auto 0;
 
+  margin: auto 0;
 `;
 
 const Body = styled.div`
   display: flex;
 
-  background: #ffffff;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  margin: auto 0;
-  gap: 50px;
-  width: 38vw;
-  height: 90vh;
-
-  box-sizing: border-box;
-  border-radius: 20px;
-  margin: auto 0;
-  margin-right: 30px;
-  border: 1px #dfdfdf solid;
-`;
-
-const MakeWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-
-  overflow: overlay;
-
-  &::-webkit-scrollbar {
-    width: 25px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-clip: padding-box;
-    background: #cfcfcf;
-    border: 8px solid #ffffff;
-    border-radius: 15px;
-  }
-  &::-webkit-scrollbar-track {
-    margin: 4px 0;
-  }
 `;
 
 type Node = {
@@ -113,18 +77,19 @@ type InformationType = {
   words: string[];
   datasets: [];
   news: [];
-  repos: []
+  repos: [];
+  seq: Number;
 };
 
 function App() {
-  const [mainWordId, setMainWordId] = useState(0);
-  const [process, setProcess] = useState(0);
+  const [process, setProcess] = useState(25);
   const [mainWord, setMainWord] = useState("");
   const [wordInformations, setWordInformations] = useState<InformationType>({
     words: [],
     datasets: [],
     news: [],
-    repos: []
+    repos: [],
+    seq: 0
   });
 
   const [wordInformationCache, setWordInformationCache] = useState<any>({});
@@ -154,18 +119,38 @@ function App() {
       setWordInformations(wordInformationCache[word]);
       return;
     }
-    if (word.length == 0) return;
+    if (word.length === 0) return;
     try {
       const exceptWords = mindmapData.nodes.map((node) => node.id).join(",");
-      const res = await axios.get(
-        `http://127.0.0.1:5000/words?topicWord=${word}&exceptWords=${exceptWords}`,
+      const wordRes = await axios.get(
+        `http://127.0.0.1:5000/words?topicWord=${word}&exceptWords=${exceptWords}&seq=0`,
         { withCredentials: false }
       );
-      setWordInformations(res.data);
+      const datasetRes = await axios.get(
+        `http://127.0.0.1:5000/datasets?topicWord=${word}`,
+        { withCredentials: false }
+      );
+      const newsRes = await axios.get(
+        `http://127.0.0.1:5000/news?topicWord=${word}`,
+        { withCredentials: false }
+      );
+      const repoRes = await axios.get(
+        `http://127.0.0.1:5000/repositories?topicWord=${word}`,
+        { withCredentials: false }
+      );
+      const infoObj = {
+        words: wordRes.data["words"],
+        datasets: datasetRes.data["datasets"],
+        news: newsRes.data["news"],
+        repos: repoRes.data["repos"],
+        seq: 0
+      }
+      setWordInformations(infoObj);
 
       // var as key
       const copied = JSON.parse(JSON.stringify(wordInformationCache));
-      copied[word] = res.data;
+
+      copied[word] = infoObj;
       setWordInformationCache(copied);
     } catch (e) {}
   };
@@ -191,34 +176,30 @@ function App() {
 
   const initMainWord = (word: string) => {
     setMainWord(word);
-    setMainWordId(mindmapData.nodes.length);
-    // let copied = JSON.parse(JSON.stringify(mindmapData));
-    // for(let i=0;i<copied.nodes.length;i++) {
-    //   copied.nodes[i].isFocused = copied.nodes[i].id == word
-    // }
-    // setMindmapData(copied)
+    // setMainWordId(mindmapData.nodes.length);
   };
 
   const handleRelatedBtnClick = (word: string) => {
+    if (word === "") return;
     appendData(word);
+
     setWordInformations({
       words: [],
       datasets: [],
       news: [],
-      repos: []
+      repos: [],
+      seq: 0
     });
-    getWordInformations(word);
     initMainWord(word);
   };
 
   const handleNodeClick = (node: Node) => {
-    if (phase == MAKE) {
+    if (phase === MAKE) {
       initMainWord(node.id);
       getWordInformations(node.id);
-
       return;
     }
-    if (phase == SELECT) {
+    if (phase === SELECT) {
       if (selectedKeywords.includes(node.id)) return;
       setSelectedKeywords([...selectedKeywords, node.id]);
     }
@@ -230,10 +211,10 @@ function App() {
   };
 
   const handleGetTopics = async () => {
-    if (selectedKeywords.length == 0) return;
+    if (selectedKeywords.length === 0) return;
     setPhase(LOADING);
     setIsLoading(true);
-    
+
     try {
       const res = await axios.get(
         `http://127.0.0.1:5000/topics?words=${selectedKeywords.join(",")}`
@@ -244,18 +225,42 @@ function App() {
     } catch (e) {}
   };
 
+  const reloadWords = async() => {
+    const seq = wordInformationCache[mainWord]['seq'];
+    try {
+      const exceptWords = mindmapData.nodes.map((node) => node.id).join(",");
+      const res = await axios.get(
+        `http://127.0.0.1:5000/words?topicWord=${mainWord}&exceptWords=${exceptWords}&seq=${seq+1}`,
+        { withCredentials: false }
+      );
+        console.log(res.data);
+      setWordInformations({...wordInformations, words: res.data['words'], seq: seq + 1});
+
+      // var as key
+      const copied = JSON.parse(JSON.stringify(wordInformationCache));
+      copied[mainWord]['words'] = res.data;
+      copied[mainWord]['seq'] = seq + 1;
+      setWordInformationCache(copied);
+    } catch (e) {}
+  }
+
+  
   useEffect(() => {
     getWordInformations(mainWord);
-    setProcess(50);
-  }, []);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mainWord]);
+
 
   return (
     <Wrapper>
+      <Header process={process}/>
+      <Body>
       <Left>
         {phase == START && <Intro />}
 
         {phase != START && (
           <ForceGraph
+            mainWord={mainWord}
             mindmapData={mindmapData}
             handleNodeClick={handleNodeClick}
           />
@@ -278,6 +283,7 @@ function App() {
             <MakePhase
               handleRelatedBtnClick={handleRelatedBtnClick}
               mainWord={mainWord}
+              reloadWords={reloadWords}
               handleMindmapEnd={handleMindmapEnd}
               wordInformations={wordInformations}
             />
@@ -297,6 +303,8 @@ function App() {
           {phase == RESULT && <ResultTopics resultTopics={resultTopics} />}
         </AnimatePresence>
       </Right>
+      </Body>
+      
     </Wrapper>
   );
 }
