@@ -1,12 +1,15 @@
 import React from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
+
+import background from "assets/intro-background.png"
+
 const Wrapper = styled.div`
   display: flex;
   position: relative;
   height: 100vh;
   width: 60vw;
-  background: #f6f6f6;
+  background: transparent;
   flex-direction: column;
   justify-content: center;
 `;
@@ -33,14 +36,25 @@ const Footer = styled(motion.div)`
   width: 90%;
 `;
 
-const title_sentences = ["마인드맵"];
+const title_sentences = ["앱 개발 주제는 어디서?"];
 
 const footer_sentence =
-  "새로운 앱을 찾고 계시나요? 우리는 여러분을 위해 다양한 앱 주제를 추천해드립니다! 삶을 더욱 편리하고 재미있게 만들어줄 혁신적인 앱을 탐색해보세요. 우리의 웹사이트에서는 여러분의 관심사와 필요에 맞는 앱을 발견할 수 있도록 도와드립니다. 건강, 학습, 먹거리, 여가활동, 소셜네트워킹, 그리고 더 많은 주제를 다루는 다양한 앱들을 소개합니다. 지금 바로 시작해 새로운 디지털 경험을 만나보세요!";
+  "앱 선택에 고민이신가요? 우리는 여러분을 위해 다양한 주제의 앱을 추천합니다! 건강, 학습, 여가 등 여러 분야에서 여러분의 삶을 더욱 풍요롭게 해줄 앱을 찾아보세요.";
 
 export default function Intro() {
   return (
-    <Wrapper>
+    <Wrapper
+    >
+      <div style={{
+        position: "absolute",
+        // backgroundSize: "100%",
+
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100vh",
+      // backgroundImage: `url(${background})`
+    }}></div>
       {/* <Titles
         initial={{ opacity: 0 }}
         animate={{ x: 20, opacity: 1 }}

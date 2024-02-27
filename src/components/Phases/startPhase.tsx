@@ -28,6 +28,7 @@ import Art from "assets/WordIcons/art.svg";
 import Trip from "assets/WordIcons/trip.svg";
 import Car from "assets/WordIcons/car.svg";
 import Electronic from "assets/WordIcons/electronic.svg";
+import Intro from "pages/intro";
 
 const Wrapper = styled(motion.div)`
   display: flex;
@@ -240,6 +241,7 @@ export default function StartPhase({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
+      
       <InputWrapper>
         <IoMdSearch />
         <KeywordInput
