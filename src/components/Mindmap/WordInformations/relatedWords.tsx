@@ -34,23 +34,25 @@ const Buttons = styled.div`
 
 const Btn = styled.button`
   all: unset;
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
+  margin: 5px;
   display: flex;
   cursor: pointer;
-
+  border-radius: 10px;
   svg {
     transition: 0.1s all;
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     margin: auto auto;
     stroke: #9f9f9f;
   }
   :hover {
-    svg {
+    background: #efefef;
+    /* svg {
       transform: scale(1.1);
       stroke: #003788;
-    }
+    } */
   }
 `;
 
@@ -124,6 +126,7 @@ export default function RelatedWords({
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             ref={addWordInputRef}
+            initial={{width: 0}}
             animate={
               isAdding
                 ? {

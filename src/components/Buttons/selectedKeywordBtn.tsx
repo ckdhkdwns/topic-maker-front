@@ -4,13 +4,13 @@ import styled from "styled-components";
 
 const Wrapper = styled.button`
   all: unset;
-  font-size: 22px;
+  font-size: 17px;
   background: #f0f0f0;
   border-radius: 30px;
   text-align: center;
-  line-height: 56px;
+  line-height: 46px;
   width: fit-content;
-  height: 56px;
+  height: 46px;
   padding: 0 20px;
 `;
 

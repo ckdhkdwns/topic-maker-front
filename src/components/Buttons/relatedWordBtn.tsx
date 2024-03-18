@@ -4,10 +4,11 @@ import styled from "styled-components";
 
 const Wrapper = styled(motion.button)`
   all: unset;
-  font-size: 17px;
+  font-size: 16px;
   background: #efefef;
   border-radius: 30px;
   text-align: center;
+
   min-width: 36px;
   line-height: 46px;
   width: max-content;

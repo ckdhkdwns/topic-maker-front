@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import React from "react";
 import styled from "styled-components";
-import Spinner from "assets/vertical.svg";
+import Spinner from "assets/tube-spinner.svg";
 
 const Wrapper = styled(motion.div)`
   display: flex;
@@ -21,6 +21,10 @@ const Center = styled.div`
 
   justify-content: center;
   align-items  :center ;
+  img{
+    width: 120px;
+    height: 120px;
+  }
 `;
 const Description = styled.div`
   color: #6a6a6a;

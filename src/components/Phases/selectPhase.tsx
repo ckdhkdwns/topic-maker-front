@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import SelectedKeywordBtn from "../Buttons/selectedKeywordBtn";
 import { AnimatePresence, motion } from "framer-motion";
+import { FaArrowRight } from "react-icons/fa6";
 
 const Wrapper = styled(motion.div)`
   display: flex;
@@ -57,6 +58,11 @@ const DoneButton = styled.button`
   margin: auto 0;
   padding: 0 20px;
   color: #ffffff;
+  display: flex;
+  cursor: pointer;
+  svg{
+    margin: auto auto;
+  }
 `;
 
 const Footer = styled.div`
@@ -98,7 +104,7 @@ export default function SelectPhase({
     >
       <Header>
         <Title>키워드 선택</Title>
-        <DoneButton onClick={() => handleGetTopics()}>다음</DoneButton>
+        <DoneButton onClick={() => handleGetTopics()}><FaArrowRight/></DoneButton>
       </Header>
       <Body>
         <Description>

@@ -12,8 +12,9 @@ const Wrapper = styled.div`
   width: fit-content;
   height: fit-content;
   
-  background-color: #ffffff;
-  
+  /* background-color: #ffffff;
+  background-size: 10px, 30px, 10px 10px, 30px 30px;
+  background-image: linear-gradient(90deg, #00000004 1px, transparent 1px), linear-gradient(90deg, #00000004 1px, transparent 1px), linear-gradient(#00000004 1px, transparent 1px), linear-gradient(#00000004 1px, transparent 1px); */
 `;
 
 
@@ -44,19 +45,21 @@ cursor: pointer;
   }
 `
 type ForceGraphProps = {
-  mainWord: string;
-  mindmapData: any;
-  handleNodeClick: Function;
+  mainWord?: string;
+  mindmapData: any ;
+  handleNodeClick?: Function;
+  graphRef: ForceGraphMethods | any;
 };
 
 export default function ForceGraph({
   mainWord,
   mindmapData,
   handleNodeClick,
+  graphRef
 }: ForceGraphProps) {
   // eslint-disable-next-line
   // const location = useLocation();
-  const graphRef = useRef<ForceGraphMethods>();
+
 
   const [cameraPosition, setCameraPosition] = useState({x: 0, y: 0})
   const nodePaint = useCallback((node: any, ctx: any, globalScale: any) => {
@@ -107,7 +110,6 @@ export default function ForceGraph({
 
   return (
     <Wrapper>
-      
       <ForceGraph2D
         // backgroundColor="black"
         // enableNodeDrag={false}
@@ -118,7 +120,7 @@ export default function ForceGraph({
         cooldownTicks={100}
         onEngineStop={handleEngineStop}
         graphData={mindmapData}
-        onNodeClick={(node) => handleNodeClick(node)}
+        onNodeClick={(node) => handleNodeClick? handleNodeClick(node) : {}}
         nodeCanvasObject={nodePaint}
       />
       <ZoomtoFitBtn onClick={() => {

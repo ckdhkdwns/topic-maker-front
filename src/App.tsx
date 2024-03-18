@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
 import styled from "styled-components";
 import { LOADING, MAKE, RESULT, SELECT, START } from "constants/phaseIndex";
@@ -12,11 +12,13 @@ import ResultTopics from "components/Phases/resultPhase";
 import axios from "axios";
 import Intro from "pages/intro";
 import Header from "components/header";
+import { ForceGraphMethods } from "react-force-graph-2d";
 
 const Wrapper = styled.div`
   display: flex;
   overflow-x: hidden;
   overflow-y: hidden;
+  padding-top: 10px;
   width: 100vw;
   height: 100vh;
   flex-direction: column;
@@ -46,17 +48,16 @@ const Right = styled.div`
 
   box-sizing: border-box;
 
-
   margin: auto 0;
 `;
 
 const Body = styled.div`
   display: flex;
-
 `;
 
 type Node = {
   id: string;
+  prevId: string;
   color: string;
   val: number;
   isRoot: boolean;
@@ -82,14 +83,16 @@ type InformationType = {
 };
 
 function App() {
+  const graphRef = useRef<ForceGraphMethods>();
   const [process, setProcess] = useState(25);
   const [mainWord, setMainWord] = useState("");
+  const [mainWordPrev, setMainWordPrev] = useState("")
   const [wordInformations, setWordInformations] = useState<InformationType>({
     words: [],
     datasets: [],
     news: [],
     repos: [],
-    seq: 0
+    seq: 0,
   });
 
   const [wordInformationCache, setWordInformationCache] = useState<any>({});
@@ -103,6 +106,7 @@ function App() {
     nodes: [
       {
         id: mainWord,
+        prevId: "",
         color: "black",
         val: 10,
         isRoot: true,
@@ -113,7 +117,7 @@ function App() {
     links: [],
   });
 
-  const getWordInformations = async (word: string) => {
+  const getWordInformations = async (word: string, prevId?: string) => {
     // 캐시에 단어의 정보가 있을 경우 api 호출 안 함
     if (Object.keys(wordInformationCache).includes(word)) {
       setWordInformations(wordInformationCache[word]);
@@ -122,8 +126,11 @@ function App() {
     if (word.length === 0) return;
     try {
       const exceptWords = mindmapData.nodes.map((node) => node.id).join(",");
+
+      const param = mainWordPrev != "" ? `${word},${mainWordPrev}` : word
+      console.log('params : ', param)
       const wordRes = await axios.get(
-        `http://127.0.0.1:5000/words?topicWord=${word}&exceptWords=${exceptWords}&seq=0`,
+        `http://127.0.0.1:5000/words?topicWord=${param}&exceptWords=${exceptWords}&seq=0`,
         { withCredentials: false }
       );
       const datasetRes = await axios.get(
@@ -143,8 +150,8 @@ function App() {
         datasets: datasetRes.data["datasets"],
         news: newsRes.data["news"],
         repos: repoRes.data["repos"],
-        seq: 0
-      }
+        seq: 0,
+      };
       setWordInformations(infoObj);
 
       // var as key
@@ -163,6 +170,7 @@ function App() {
           ...nodes,
           {
             id: word,
+            prevId: mainWord,
             color: "black",
             val: 10,
             isRoot: false,
@@ -174,10 +182,6 @@ function App() {
     });
   };
 
-  const initMainWord = (word: string) => {
-    setMainWord(word);
-    // setMainWordId(mindmapData.nodes.length);
-  };
 
   const handleRelatedBtnClick = (word: string) => {
     if (word === "") return;
@@ -188,15 +192,17 @@ function App() {
       datasets: [],
       news: [],
       repos: [],
-      seq: 0
+      seq: 0,
     });
-    initMainWord(word);
+    setMainWordPrev(mainWord);
+    setMainWord(word);
   };
 
   const handleNodeClick = (node: Node) => {
     if (phase === MAKE) {
-      initMainWord(node.id);
-      getWordInformations(node.id);
+      setMainWordPrev(node.prevId);
+      setMainWord(node.id);
+      getWordInformations(node.id, node.prevId);
       return;
     }
     if (phase === SELECT) {
@@ -208,6 +214,7 @@ function App() {
   const handleMindmapEnd = () => {
     setPhase(SELECT);
     setProcess(75);
+    graphRef.current?.zoomToFit(1000, 100);
   };
 
   const handleGetTopics = async () => {
@@ -219,92 +226,100 @@ function App() {
       const res = await axios.get(
         `http://127.0.0.1:5000/topics?words=${selectedKeywords.join(",")}`
       );
+      console.log(res.data);
       setPhase(RESULT);
       setProcess(100);
       setResultTopics(res.data.ideas);
     } catch (e) {}
   };
 
-  const reloadWords = async() => {
-    const seq = wordInformationCache[mainWord]['seq'];
+  const reloadWords = async () => {
+    const seq = wordInformationCache[mainWord]["seq"];
     try {
       const exceptWords = mindmapData.nodes.map((node) => node.id).join(",");
       const res = await axios.get(
-        `http://127.0.0.1:5000/words?topicWord=${mainWord}&exceptWords=${exceptWords}&seq=${seq+1}`,
+        `http://127.0.0.1:5000/words?topicWord=${mainWord}&exceptWords=${exceptWords}&seq=${
+          seq + 1
+        }`,
         { withCredentials: false }
       );
-        console.log(res.data);
-      setWordInformations({...wordInformations, words: res.data['words'], seq: seq + 1});
+      console.log(res.data);
+      setWordInformations({
+        ...wordInformations,
+        words: res.data["words"],
+        seq: seq + 1,
+      });
 
       // var as key
       const copied = JSON.parse(JSON.stringify(wordInformationCache));
-      copied[mainWord]['words'] = res.data;
-      copied[mainWord]['seq'] = seq + 1;
+      copied[mainWord]["words"] = res.data["words"];
+      copied[mainWord]["seq"] = seq + 1;
       setWordInformationCache(copied);
+      console.log("copied: ", copied);
     } catch (e) {}
-  }
+  };
 
-  
   useEffect(() => {
+    console.log('prev: ', mainWordPrev)
     getWordInformations(mainWord);
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mainWord]);
-
+  }, [mainWordPrev]);
 
   return (
     <Wrapper>
-      <Header process={process}/>
+      <Header process={process} />
       <Body>
-      <Left>
-        {phase == START && <Intro />}
+        <Left>
+          {phase == START && <Intro />}
 
-        {phase != START && (
-          <ForceGraph
-            mainWord={mainWord}
-            mindmapData={mindmapData}
-            handleNodeClick={handleNodeClick}
-          />
-        )}
-      </Left>
-      <Right>
-        <AnimatePresence>
-          {phase == START && (
-            <StartPhase
-              setProcess={setProcess}
-              setPhase={setPhase}
-              setMainWord={setMainWord}
-              setMindmapData={setMindmapData}
-              getWordInformations={getWordInformations}
-            />
-          )}
-        </AnimatePresence>
-        <AnimatePresence>
-          {phase == MAKE && (
-            <MakePhase
-              handleRelatedBtnClick={handleRelatedBtnClick}
+          {phase != START && (
+            <ForceGraph
+              graphRef={graphRef}
               mainWord={mainWord}
-              reloadWords={reloadWords}
-              handleMindmapEnd={handleMindmapEnd}
-              wordInformations={wordInformations}
+              mindmapData={mindmapData}
+              handleNodeClick={handleNodeClick}
             />
           )}
-        </AnimatePresence>
-        <AnimatePresence>
-          {phase == SELECT && (
-            <SelectKeywords
-              selectedKeyWords={selectedKeywords}
-              handleGetTopics={handleGetTopics}
-              isLoading={isLoading}
-            />
-          )}
-        </AnimatePresence>
-        <AnimatePresence>{phase == LOADING && <Loading />}</AnimatePresence>
-        <AnimatePresence>
-          {phase == RESULT && <ResultTopics resultTopics={resultTopics} />}
-        </AnimatePresence>
-      </Right>
+        </Left>
+        <Right>
+          <AnimatePresence>
+            {phase == START && (
+              <StartPhase
+                setProcess={setProcess}
+                setPhase={setPhase}
+                setMainWord={setMainWord}
+                setMindmapData={setMindmapData}
+                getWordInformations={getWordInformations}
+              />
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {phase == MAKE && (
+              <MakePhase
+                handleRelatedBtnClick={handleRelatedBtnClick}
+                mainWord={mainWord}
+                reloadWords={reloadWords}
+                handleMindmapEnd={handleMindmapEnd}
+                wordInformations={wordInformations}
+              />
+              
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {phase == SELECT && (
+              <SelectKeywords
+                selectedKeyWords={selectedKeywords}
+                handleGetTopics={handleGetTopics}
+                isLoading={isLoading}
+              />
+            )}
+          </AnimatePresence>
+          <AnimatePresence>{phase == LOADING && <Loading />}</AnimatePresence>
+          <AnimatePresence>
+            {phase == RESULT && <ResultTopics resultTopics={resultTopics} />}
+          </AnimatePresence>
+        </Right>
       </Body>
-      
     </Wrapper>
   );
 }

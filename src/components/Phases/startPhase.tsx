@@ -33,7 +33,7 @@ import Intro from "pages/intro";
 const Wrapper = styled(motion.div)`
   display: flex;
   flex-direction: column;
-
+  padding-top: 10px;
   background: #ffffff;
   border-radius: 10px;
   height: 100vh;
@@ -43,7 +43,7 @@ const InputWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 25px 0;
-  margin: 0 30px 30px;
+  margin: 0 30px 25px;
   border-bottom: 1px solid #dfdfdf;
 
   position: relative;
@@ -68,9 +68,17 @@ const KeywordInput = styled.input`
   width: 100%;
 `;
 
+const Description = styled.div`
+  font-size: 16px;
+  color: #6f6f6f;
+  padding-left: 35px;
+  padding-bottom: 25px;
+`
+
 const Words = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  /* grid-template-columns: repeat(3, 1fr); */
   width: 100%;
   gap: 10px;
 
@@ -133,12 +141,6 @@ const wordObjects = [
     width: 30,
     height: 30,
   },
-  { name: "뉴스", engName: "News", source: News, width: 30, height: 30 },
-  { name: "도서", engName: "Book", source: Book, width: 30, height: 30 },
-
-  { name: "동물", engName: "Animal", source: Animal, width: 30, height: 30 },
-
-  { name: "미용", engName: "Beauty", source: Beauty, width: 30, height: 30 },
   {
     name: "부동산",
     engName: "Real Estate",
@@ -146,6 +148,13 @@ const wordObjects = [
     width: 30,
     height: 30,
   },
+  { name: "뉴스", engName: "News", source: News, width: 30, height: 30 },
+  { name: "도서", engName: "Book", source: Book, width: 30, height: 30 },
+
+  { name: "동물", engName: "Animal", source: Animal, width: 30, height: 30 },
+
+  { name: "미용", engName: "Beauty", source: Beauty, width: 30, height: 30 },
+  
   {
     name: "사업",
     engName: "Business",
@@ -181,6 +190,51 @@ const wordObjects = [
   },
 ];
 
+const new_words = [
+  "소셜",
+  "건강",
+  "여행",
+  "음악",
+  "교육",
+  "뉴스",
+  "음식",
+  "사진",
+  "쇼핑",
+  "금융",
+  "날씨",
+  "게임",
+  "홈",
+  "통신",
+  "라이프스타일",
+  "자동차",
+  "도서",
+  "스포츠",
+  "정부",
+  "건강",
+  "영화",
+  "취미",
+  "문화",
+  "자연",
+  "휴식",
+  "공부",
+  "업무",
+  "디자인",
+  "인테리어",
+  "바이오",
+  "의료",
+  "마케팅",
+  "유통",
+  "디지털",
+  "보안",
+  "산업",
+  "환경",
+  "음향",
+  "심리",
+  "데이터",
+  "인공지능",
+  "로봇",
+  "가상현실",
+]
 type StartPhaseProps = {
   setProcess: Function;
   setPhase: Function;
@@ -256,11 +310,12 @@ export default function StartPhase({
         <Line>
           <AccentWord>카테고리별 키워드</AccentWord>로 확인해보세요.
         </Line> */}
+        <Description>카테고리별 키워드로 확인해보세요.</Description>
       <Words>
         {wordObjects.map((obj) => {
           return (
             <StartWordBtn
-              word={obj}
+              word={obj.name}
               handleBtnClick={(w: string) => initMake(w)}
             />
           );

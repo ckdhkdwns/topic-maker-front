@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import RelatedWords from "../Mindmap/WordInformations/relatedWords";
 import DatasetsPreview from "../Mindmap/WordInformations/datasetsPreivew";
 import NewsPreview from "../Mindmap/WordInformations/news";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import ReposPreview from "components/Mindmap/WordInformations/repos";
+import { FaArrowRight } from "react-icons/fa";
+import ViewMore from "components/Mindmap/WordInformations/viewMore";
+import { DATASET, NEWS, REPO } from "constants/infotype";
 
 const Wrapper = styled(motion.div)`
   display: flex;
@@ -14,11 +17,12 @@ const Wrapper = styled(motion.div)`
   scrollbar-gutter: stable;
 `;
 
+const Slider = styled(motion.div)``;
+
 const Header = styled.div`
   display: flex;
   flex-direction: column;
   transition: 0.1s all;
-
   border-radius: 10px;
 
   /* margin-right: 0; */
@@ -28,7 +32,7 @@ const Header = styled.div`
 const Divider = styled.div`
   background-color: #dfdfdf;
   height: 1px;
-  width: 95%;
+  width: 100%;
   margin: 0 auto;
 `;
 const Head = styled.div`
@@ -42,7 +46,7 @@ const Head = styled.div`
 const DoneButton = styled.button`
   all: unset;
   font-size: 17px;
-
+  display: flex;
   background: #003788;
   border-radius: 30px;
   text-align: center;
@@ -52,6 +56,10 @@ const DoneButton = styled.button`
   margin: auto 0;
   padding: 0 20px;
   color: #ffffff;
+  cursor: pointer;
+  svg {
+    margin: auto auto;
+  }
 `;
 
 const MainWord = styled.div`
@@ -66,7 +74,7 @@ const Informations = styled.div`
   gap: 30px;
   height: fit-content;
 
-  margin: 10px;
+
 `;
 type MakePhaseProps = {
   handleRelatedBtnClick: Function;
@@ -81,8 +89,18 @@ export default function MakePhase({
   mainWord,
   handleMindmapEnd,
   wordInformations,
-  reloadWords
+  reloadWords,
 }: MakePhaseProps) {
+  const [isViewMore, setIsViewMore] = useState(false);
+  const [infoType, setInfoType] = useState(DATASET);
+  const [infoList, setInfoList] = useState([]);
+
+  useEffect(() => {
+    if (infoType == DATASET) setInfoList(wordInformations.datasets);
+    if (infoType == REPO) setInfoList(wordInformations.repos);
+    if (infoType == NEWS) setInfoList(wordInformations.news);
+  }, [infoType]);
+
   return (
     <Wrapper
       initial={{ opacity: 0 }}
@@ -95,27 +113,44 @@ export default function MakePhase({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Header>
-        <Head>
-          <MainWord>{mainWord}</MainWord>
-          <DoneButton onClick={() => handleMindmapEnd()}>다음</DoneButton>
-        </Head>
-        <RelatedWords
-          handleRelatedBtnClick={handleRelatedBtnClick}
-          relatedWords={wordInformations.words}
-          handleMindmapEnd={handleMindmapEnd}
-          reloadWords={reloadWords}
-        />
-      </Header>
+      <AnimatePresence>
+        {!isViewMore ? (
+          <Slider initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <Header>
+               <Head>
+                <MainWord>{mainWord}</MainWord>
+                <DoneButton onClick={() => handleMindmapEnd()}>
+                  <FaArrowRight />
+                </DoneButton>
+              </Head>
+              <RelatedWords
+                handleRelatedBtnClick={handleRelatedBtnClick}
+                relatedWords={wordInformations.words}
+                handleMindmapEnd={handleMindmapEnd}
+                reloadWords={reloadWords}
+              />
+            </Header>
 
-      <Informations>
-        <Divider />
-        <DatasetsPreview datasets={wordInformations.datasets} />
-        {wordInformations.datasets.length > 0 && <Divider /> }
-        <NewsPreview news={wordInformations.news} />
-        {wordInformations.news.length > 0 && <Divider /> }
-        <ReposPreview repos={wordInformations.repos} />
-      </Informations>
+            <Informations>
+              <Divider />
+              <DatasetsPreview
+                setIsViewMore={setIsViewMore}
+                datasets={wordInformations.datasets}
+              />
+              {/* {wordInformations.datasets.length > 0 && <Divider />} */}
+              <ReposPreview repos={wordInformations.repos} />
+              {/* {wordInformations.news.length > 0 && <Divider />} */}
+              <NewsPreview news={wordInformations.news} />
+            </Informations>
+          </Slider>
+        ) : (
+          <ViewMore
+            setIsViewMore={setIsViewMore}
+            infoType={infoType}
+            infoList={infoList}
+          />
+        )}
+      </AnimatePresence>
     </Wrapper>
   );
 }

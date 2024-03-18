@@ -46,16 +46,17 @@ const ProcessBar = styled.div<{ width: number }>`
   left: 0;
   background: #003788;
   width: ${(props) => props.width}vw;
-  height: 5px;
-  border-radius: 0 3px 3px 0;
+  height: 8px;
+  /* border-radius: 0 3px 3px 0; */
   transition: 0.5s width;
 `;
 
 const BackgroundBar = styled.div`
-  height: 5px;
+  height: 8px;
   position: absolute;
 
-  background: #dfdfdf;
+  background: #efefef;
+  border-bottom: 1px solid #dfdfdf;
   width: 100vw;
 `;
 
